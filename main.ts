@@ -1,15 +1,22 @@
 // news-image-20261126 — "THE WORLD TODAY — THURSDAY, 26 NOVEMBER 2026"
 // A newspaper front page drawn fully procedurally (Node 22 stdlib only,
 // no network, deterministic). Writes /output/entry.png (1024x1024).
-// 35 stories. REVISED 26 Nov (improve round): 7 stories replaced after a
-// re-audit against primary wires. The 4 flagged in research (#10 Netanyahu,
-// #13 Nigeria meth, #14 Colombia, #21 Hera) were all first reported 25 Nov;
-// the spot-check caught 3 more (#15 BBC vote and #23 India plan were both
-// announced Wed 25 Nov; #25 rugby quotes came from a Wednesday presser).
-// Every replacement is first reported 26 Nov 2026 (UTC): Reuters slugs
-// 2026-11-26, BBC pieces published 00:23 / 00:40 UTC, Variety 04:01 UTC.
+// 35 stories. REVISED 26 Nov (improve round 1): 7 stories replaced after a
+// re-audit against primary wires (see news26-improve-result-20261126.md).
+// REVISED 26 Nov (improve round 2, evening): 5 more stories replaced —
+// #8 rupee and #17 Iowa blast were both first reported 25 Nov; #11 dollar,
+// #12 US 10-yr yield and #35 US futures were 01:30 UTC market quotes.
+// Replacements (all first reported 26 Nov, Reuters slugs 2026-11-26):
+// #8 Brazil IPCA-15 4.64% (13:06 UTC), #11 De Cos set to be next ECB chief,
+// #12 EU leaders wrestle over 1.6TN euro budget, #17 Argentina Senate to
+// vote on axing primaries (~11:00 UTC), #35 NFL Thanksgiving triple-header
+// (kickoff 18:00 UTC, preview only — no game has started at build time).
+// #22 reworded to past tense: Progress MS-36 DOCKED 12:08 UTC (NASA).
+// PCE/GDP (GDP 4.3% / PCE 3.8% / core 3.3%) are DELIBERATELY ABSENT:
+// the BEA released them Wed 25 Nov 13:30 UTC (Thanksgiving moved the
+// release a day early) — they are 25 Nov numbers, not 26 Nov news.
 // Times are UTC unless noted. #2 is timed in KST (07:04 KST Thu).
-// #20 (FCC) was ruled Wed evening in the US; first reported 26 Nov 02:22 UTC.
+// #32 Guitar Wars time (~03:00 UTC) is an estimate from BBC "13 hrs ago".
 // No story here first broke on 25 Nov or earlier, under that convention.
 import { mkdirSync, writeFileSync } from "node:fs";
 import { deflateSync } from "node:zlib";
@@ -203,6 +210,7 @@ const F: Record<string, number[]> = {
   "'": [0x04, 0x04, 0x08, 0, 0, 0, 0],
   '"': [0x0a, 0x0a, 0x0a, 0, 0, 0, 0],
   $: [0x04, 0x0f, 0x14, 0x0e, 0x05, 0x1e, 0x04],
+  "\u20ac": [0x0e, 0x11, 0x10, 0x1e, 0x10, 0x11, 0x0e],
   "#": [0x0a, 0x0a, 0x1f, 0x0a, 0x1f, 0x0a, 0x0a],
   "*": [0, 0x04, 0x15, 0x0e, 0x15, 0x04, 0],
   "=": [0, 0, 0x1f, 0, 0x1f, 0, 0],
@@ -333,34 +341,34 @@ const STORIES: Story[] = [
   { n: 5, tag: "MARKETS", title: "ASIA SHARES BOUNCE AS AI SELL-OFF PAUSES", sum: "Nikkei gains 1.6% and Kospi 1.9% after Wall Street fought back from deep lows; regional shares still off 9% in November.", src: "Reuters", time: "01:30 UTC" },
   { n: 6, tag: "DISASTER", title: "JAVA GOLD MINE: 13 DEAD, 13 STILL TRAPPED", sum: "Rescuers resume the search for 13 workers trapped in an illegal gold mine in West Java after 13 are confirmed dead.", src: "Reuters", time: "03:00 UTC" },
   { n: 7, tag: "MARKETS", title: "BANK OF JAPAN SIGNALS FASTER RATE HIKES", sum: "Board member Naoki Tamura says the BOJ must respond swiftly to signs of an inflation overshoot, including by speeding up rate rises.", src: "Reuters", time: "01:30 UTC" },
-  { n: 8, tag: "MARKETS", title: "RUPEE AT 11-MONTH HIGH ON RECORD INFLOWS", sum: "The rupee closes near 92.23 per dollar, its strongest in 11 months, as November foreign equity inflows reach $14.26bn.", src: "Reuters", time: "26 NOV" },
+  { n: 8, tag: "ECONOMY", title: "BRAZIL INFLATION EASES TO 4.64%", sum: "Brazil's IPCA-15 inflation eases to 4.64% in mid-November, below forecasts, in the first reading since the election runoff.", src: "Reuters", time: "13:06 UTC" },
   { n: 9, tag: "TECH", title: "UBER NAMES RAKESH RANJAN INDIA CHIEF", sum: "Uber appoints outsider Rakesh Ranjan as president for India and South Asia, effective 4 January 2027.", src: "Reuters", time: "02:09 UTC" },
   { n: 10, tag: "POLITICS", title: "FRANCE MAINSTREAM RISKS PRESIDENTIAL WIPEOUT", sum: "Le Pen and Melenchon top polls for the April-May 2027 vote while the centre has no agreed candidate.", src: "BBC", time: "00:23 UTC" },
-  { n: 11, tag: "MARKETS", title: "DOLLAR EASES TO 103.71 AS YIELDS SLIP", sum: "The dollar index eases as Treasury yields fall; the safe-haven Swiss franc gains and the euro inches up to $1.0973.", src: "Reuters", time: "01:30 UTC" },
-  { n: 12, tag: "MARKETS", title: "US 10-YEAR YIELD AT 4.848% AFTER 11-WEEK LOW", sum: "Yields on 10-year Treasuries ease to 4.848% after touching an 11-week trough overnight; the yen holds at 159.14.", src: "Reuters", time: "01:30 UTC" },
+  { n: 11, tag: "ECONOMY", title: "SPAIN'S DE COS SET TO BE NEXT ECB CHIEF", sum: "EU leaders are set to nominate Spain's Pablo Hernandez de Cos as the next ECB president, succeeding Christine Lagarde in February.", src: "Reuters", time: "26 NOV" },
+  { n: 12, tag: "POLITICS", title: "EU LEADERS WRESTLE OVER 1.6TN EURO BUDGET, UKRAINE CASH", sum: "EU leaders wrestle over a 1.6 trillion euro budget for 2028-2034 and a 45 billion euro loan for Ukraine; Meloni says a deal is far off.", src: "Reuters", time: "26 NOV" },
   { n: 13, tag: "POLITICS", title: "COULD AL-SHABAB TAKE OVER AS TROOPS LEAVE SOMALIA", sum: "Ugandan troops are withdrawing after 20 years as funding strains hit; analysts fear Mogadishu could fall.", src: "BBC", time: "26 NOV" },
   { n: 14, tag: "POLITICS", title: "SPAIN VOTES SUNDAY: SNAP ELECTION AT A CROSSROADS", sum: "Feijoo's conservatives lead the polls ahead of Sunday's snap vote after eight years of Socialist rule.", src: "BBC", time: "00:40 UTC" },
   { n: 15, tag: "CULTURE", title: "SOUTH PARK FINALE: GTA 6, DATA CENTRES, ZOMBIE KENNY", sum: "Season 29 ends with outages, AI data centres and a GTA 6 frenzy as the town hunts a Chinese spy.", src: "Variety", time: "04:01 UTC" },
-  { n: 16, tag: "POLITICS", title: "UK TO PUBLISH NEW TREATIES AGREED WITH EU", sum: "The UK government is set to publish new treaties agreed with the European Union.", src: "BBC", time: "26 NOV" },
-  { n: 17, tag: "DEFENCE", title: "US ARMY HAILS IOWA EXPLOSIVES BLAST A SUCCESS", sum: "The US Army says a controlled lead azide explosives blast in Iowa was a 'huge success'.", src: "BBC", time: "26 NOV" },
-  { n: 18, tag: "MEDIA", title: "BBC JOINS MET OFFICE FOR WEATHER COVERAGE", sum: "The BBC launches a partnership with the Met Office for its weather coverage.", src: "BBC", time: "26 NOV" },
-  { n: 19, tag: "POLITICS", title: "THE PASTOR WHO WANTS WOMEN'S VOTE REPEALED", sum: "A US pastor's movement to overturn women's right to vote gains traction among very conservative Christians.", src: "BBC", time: "26 NOV" },
+  { n: 16, tag: "POLITICS", title: "UK TO PUBLISH NEW TREATIES AGREED WITH EU", sum: "The UK government is set to publish new treaties agreed with the European Union.", src: "BBC", time: "02:13 UTC" },
+  { n: 17, tag: "POLITICS", title: "ARGENTINA SENATE TO VOTE ON AXING PRIMARIES", sum: "Argentina's Senate votes on suspending primary elections, a move that could boost Milei's re-election bid ahead of next year's vote.", src: "Reuters", time: "11:00 UTC" },
+  { n: 18, tag: "MEDIA", title: "BBC JOINS MET OFFICE FOR WEATHER COVERAGE", sum: "The BBC launches a partnership with the Met Office for its weather coverage.", src: "BBC", time: "00:05 UTC" },
+  { n: 19, tag: "POLITICS", title: "THE PASTOR WHO WANTS WOMEN'S VOTE REPEALED", sum: "A US pastor's movement to overturn women's right to vote gains traction among very conservative Christians.", src: "BBC", time: "00:24 UTC" },
   { n: 20, tag: "COURTS", title: "JUDGE BLOCKS FCC MOVE AGAINST ABC LICENCES", sum: "A US judge blocks the FCC's move against ABC station licences: 'This is not a close case'.", src: "Reuters", time: "02:22 UTC" },
   { n: 21, tag: "TECH", title: "US SPLIT OVER HUANG SPY CLAIMS AFTER NVIDIA RETURN", sum: "FBI, CIA and White House officials disagree over whether Alice Huang passed secrets to China.", src: "Reuters", time: "26 NOV" },
-  { n: 22, tag: "SPACE", title: "RUSSIAN FREIGHTER DUE TO DOCK 12:11 UTC", sum: "Progress MS-36 is due to dock with the ISS at 12:11 UTC today, using the Poisk module port.", src: "Behind The Black", time: "26 NOV" },
+  { n: 22, tag: "SPACE", title: "RUSSIAN FREIGHTER DOCKS WITH SPACE STATION", sum: "Progress MS-36 docks with the ISS at 12:08 UTC, delivering about 3 tonnes of cargo; it will stay for about 8 months.", src: "NASA", time: "12:08 UTC" },
   { n: 23, tag: "ECONOMY", title: "BANK OF KOREA LIFTS RATE TO 3.25% IN 25 BPS HIKE", sum: "Seoul resumes tightening after an October pause as an AI export boom keeps growth brisk and inflation high.", src: "Reuters", time: "00:00 UTC" },
   { n: 24, tag: "MARKETS", title: "GOLD EASES TO $3,566, DOWN 8% IN NOVEMBER", sum: "Gold slips 0.4% to $3,566 an ounce, having fallen almost 8% so far this month.", src: "Reuters", time: "01:30 UTC" },
   { n: 25, tag: "TRADE", title: "CHINESE FIRMS NOW TOP RIVALS FOR JAPANESE ABROAD", sum: "A JETRO survey of 7,695 firms finds Chinese rivals the biggest threat in Latin America, Africa and Thailand.", src: "Reuters", time: "02:00 UTC" },
-  { n: 26, tag: "SPORT", title: "WORLD CHESS: GAME 3 DUE, GUKESH-SINDAROV 1-1", sum: "The World Championship match is tied 1-1 after Game 2 ends in a draw; Game 3 is scheduled for today.", src: "Chess", time: "26 NOV" },
+  { n: 26, tag: "SPORT", title: "WORLD CHESS: GAME 3 DUE, GUKESH-SINDAROV 1-1", sum: "The World Championship match is tied 1-1 after Game 2 ends in a draw; Game 3 is scheduled for today.", src: "Chess", time: "14:00 UTC" },
   { n: 27, tag: "SPORT", title: "ASIA CUP RISING STARS: SRI LANKA A v INDIA A", sum: "Sri Lanka A meet India A in Doha in the semi-final of the DP World Men's Asia Cup Rising Stars.", src: "BCCI", time: "26 NOV" },
-  { n: 28, tag: "LIFE", title: "THANKSGIVING DAY IN THE US, AMID STORMS", sum: "Americans mark Thanksgiving as storms bring high winds and heavy rain to the East Coast and snow to the Midwest.", src: "AP", time: "26 NOV" },
-  { n: 29, tag: "CULTURE", title: "INDONESIA'S OSCAR ENTRY: 'FOUR SEASONS IN JAVA'", sum: "A slow-burning thriller with magical realism is Indonesia's submission for the Oscars.", src: "Variety", time: "26 NOV" },
+  { n: 28, tag: "LIFE", title: "THANKSGIVING DAY IN THE US, AMID STORMS", sum: "Americans mark Thanksgiving as storms bring high winds and heavy rain to the East Coast and snow to the Midwest.", src: "AP", time: "09:43 UTC" },
+  { n: 29, tag: "CULTURE", title: "INDONESIA'S OSCAR ENTRY: 'FOUR SEASONS IN JAVA'", sum: "A slow-burning thriller with magical realism is Indonesia's submission for the Oscars.", src: "Variety", time: "04:49 UTC" },
   { n: 30, tag: "CULTURE", title: "COLMAN DOMINGO ANSWERS OSCAR PUNDITS", sum: "The actor responds to posts telling pundits not to add his 'Michael' performance to predictions.", src: "Variety", time: "26 NOV" },
-  { n: 31, tag: "CULTURE", title: "FINLAND'S OSCAR ENTRY: 'THE SQUIRREL'", sum: "An endearing futuristic dramedy makes a case for organic love in the age of automation.", src: "Variety", time: "26 NOV" },
-  { n: 32, tag: "CULTURE", title: "GUITAR WARS: THE FIGHT OVER THE STRATOCASTER", sum: "The transatlantic battle over Fender's Stratocaster guitar, a design icon since the 1950s.", src: "BBC", time: "26 NOV" },
+  { n: 31, tag: "CULTURE", title: "FINLAND'S OSCAR ENTRY: 'THE SQUIRREL'", sum: "An endearing futuristic dramedy makes a case for organic love in the age of automation.", src: "Variety", time: "02:13 UTC" },
+  { n: 32, tag: "CULTURE", title: "GUITAR WARS: THE FIGHT OVER THE STRATOCASTER", sum: "The transatlantic battle over Fender's Stratocaster guitar, a design icon since the 1950s.", src: "BBC", time: "03:00 UTC" },
   { n: 33, tag: "NATURE", title: "THE NIGHT WATCHMEN OF MALAYSIA'S TERRAPINS", sum: "Night watchmen guard Malaysia's critically endangered river terrapins along the riverbank.", src: "Mongabay", time: "26 NOV" },
   { n: 34, tag: "MARKETS", title: "S&P PUTS NVIDIA RATING ON WATCH FOR DOWNGRADE", sum: "S&P puts Nvidia's credit rating on watch for a possible downgrade, citing weaknesses in management and board oversight.", src: "Reuters", time: "01:30 UTC" },
-  { n: 35, tag: "MARKETS", title: "US FUTURES EDGE UP AFTER WALL ST FIGHTBACK", sum: "S&P 500 futures add 0.5% and Nasdaq futures 0.4% early on Thursday after Wall Street recouped most of its steep intraday losses.", src: "Reuters", time: "01:30 UTC" },
+  { n: 35, tag: "SPORT", title: "NFL THANKSGIVING TRIPLE-HEADER TODAY", sum: "Bears at Lions, Eagles at Cowboys and Chiefs at Bills headline a Thanksgiving triple-header; kickoff 18:00 UTC.", src: "Freep / AP", time: "18:00 UTC" },
 ];
 
 // ---------------------------------------------------------------- layout
@@ -472,7 +480,7 @@ const STATS: Array<[string, string]> = [
   ["+1.6%", "NIKKEI \u00b7 KOSPI +1.9%"],
   ["13 DEAD", "13 TRAPPED \u00b7 JAVA MINE"],
   ["$3,566", "GOLD, -8% IN NOV"],
-  ["103.71", "DOLLAR INDEX"],
+  ["\u20ac1.6TN", "EU BUDGET 2028-2034"],
 ];
 function statBoxes(y: number): void {
   const bw = 154;
@@ -501,12 +509,14 @@ const PINS: Array<{ n: string; x: number; y: number }> = [
   { n: "1", x: 672, y: 30 },
   { n: "6", x: 692, y: 45 },
   { n: "2", x: 732, y: 22 },
+  { n: "8", x: 168, y: 42 },
+  { n: "17", x: 146, y: 46 },
 ];
 function worldMap(x: number, y: number, w: number, h: number): void {
   fillRect(x, y, w, h, PANEL);
   box(x, y, w, h, INK, 1);
   drawText(x + 6, y + 4, "WORLD MAP", 1, NAVY, true);
-  drawText(x + w - textW("PINS MARK LEAD STORIES - 2 IS KOREA, ALSO #23", 1) - 6, y + 4, "PINS MARK LEAD STORIES - 2 IS KOREA, ALSO #23", 1, INKSOFT, true);
+  drawText(x + w - textW("PINS MARK LEAD STORIES - 2 IS KOREA, ALSO #23 - 8, 17 IN S AMERICA", 1) - 6, y + 4, "PINS MARK LEAD STORIES - 2 IS KOREA, ALSO #23 - 8, 17 IN S AMERICA", 1, INKSOFT, true);
   // continents (very simplified)
   fillRect(x + 52, y + 16, 120, 16, LAND); // N America
   fillRect(x + 132, y + 32, 40, 8, LAND); // Central America
@@ -583,7 +593,7 @@ function main(): void {
   // ---- headline (story 1) — no apostrophe in the headline
   drawTextC(W / 2, 166, "TARIFF FALLOUT: ASIA MEETS AS NEW TRUMP LEVIES LAND", 2, INK, true);
   drawTextC(W / 2, 190, "CPTPP, ASEAN and EU trade chiefs gather in Vietnam \u00b7 Seoul vows talks \u00b7 Hanoi races to close a deal", 1, INKSOFT);
-  drawTextC(W / 2, 202, "35 DATED STORIES \u00b7 7 REGIONS \u00b7 16 FIELDS \u00b7 UTC TIMELINE & DATE-CHECK AUDIT", 1, NAVY, true);
+  drawTextC(W / 2, 202, "35 DATED STORIES \u00b7 8 REGIONS \u00b7 15 FIELDS \u00b7 UTC TIMELINE & DATE-CHECK AUDIT", 1, NAVY, true);
   hline(MX, 212, CW, RULE, 3);
 
   // ---- three lead panels
@@ -598,14 +608,14 @@ function main(): void {
   const ty = py + ph + 10;
   fillRect(MX, ty, CW, 28, NAVY);
   drawText(MX + 8, ty + 4, "UTC TIMELINE", 1, [255, 255, 255], true);
-  drawText(MX + 8, ty + 16, "00:23 France at risk \u00b7 00:40 Spain votes Sunday \u00b7 01:37 Oil jumps", 1, [255, 255, 255]);
-  drawText(MX + 8 + 470, ty + 4, "02:00 JETRO survey \u00b7 03:01 Seoul vows tariff talks", 1, [255, 255, 255]);
-  drawText(MX + 8 + 470, ty + 16, "04:01 South Park finale \u00b7 12:11 Progress due to dock", 1, [255, 255, 255]);
+  drawText(MX + 8, ty + 16, "00:00 BOK hikes to 3.25% \u00b7 00:23 France at risk \u00b7 00:40 Spain votes", 1, [255, 255, 255]);
+  drawText(MX + 8 + 470, ty + 4, "02:13 UK-EU treaties \u00b7 03:01 Asia meets on tariffs \u00b7 04:01 South Park", 1, [255, 255, 255]);
+  drawText(MX + 8 + 470, ty + 16, "12:08 Progress docks \u00b7 13:06 Brazil inflation \u00b7 18:00 NFL kickoff", 1, [255, 255, 255]);
 
   // ---- regions bar
   const ry = ty + 28 + 10;
   drawText(MX, ry, "REGIONS:", 1, INK, true);
-  const regions = ["N AMERICA 12", "EUROPE 7", "M EAST 1", "AFRICA 1", "S ASIA 4", "E ASIA 5", "SE ASIA 5"];
+  const regions = ["N AMERICA 9", "EUROPE 9", "M EAST 1", "AFRICA 1", "S ASIA 3", "E ASIA 5", "SE ASIA 5", "S AMERICA 2"];
   let rx = MX + 62;
   for (const r of regions) {
     const w = textW(r, 1) + 12;
@@ -644,7 +654,7 @@ function main(): void {
   drawText(MX + 10, fy + 52, "No story first broke on 25 Nov or earlier. #2 is timed in KST.", 1, INKSOFT);
   const fx = MX + 576;
   drawText(fx, fy + 14, "SOURCES", 1, INK, true);
-  drawPara(fx, fy + 28, "Reuters, BBC, AP, KCNA, Variety, Sky Sports, Mongabay, BCCI, Chess, Behind The Black.", 392, 1, INKSOFT, 10);
+  drawPara(fx, fy + 28, "Reuters, BBC, AP, KCNA, Variety, Mongabay, BCCI, Chess, NASA, Detroit Free Press.", 392, 1, INKSOFT, 10);
   drawTextC(W / 2, fy + 64, "Drawn entirely by code \u00b7 main.ts \u00b7 Node 22 stdlib \u00b7 no network \u00b7 deterministic", 1, INKSOFT);
 
   verifyLayout();
