@@ -1,8 +1,16 @@
 // news-image-20261126 — "THE WORLD TODAY — THURSDAY, 26 NOVEMBER 2026"
 // A newspaper front page drawn fully procedurally (Node 22 stdlib only,
 // no network, deterministic). Writes /output/entry.png (1024x1024).
-// 35 stories, every one first reported Thursday 26 November 2026
-// (Reuters, BBC, AP, Al Jazeera, Variety, Sky, Mongabay, BCCI).
+// 35 stories. REVISED 26 Nov (improve round): 7 stories replaced after a
+// re-audit against primary wires. The 4 flagged in research (#10 Netanyahu,
+// #13 Nigeria meth, #14 Colombia, #21 Hera) were all first reported 25 Nov;
+// the spot-check caught 3 more (#15 BBC vote and #23 India plan were both
+// announced Wed 25 Nov; #25 rugby quotes came from a Wednesday presser).
+// Every replacement is first reported 26 Nov 2026 (UTC): Reuters slugs
+// 2026-11-26, BBC pieces published 00:23 / 00:40 UTC, Variety 04:01 UTC.
+// Times are UTC unless noted. #2 is timed in KST (07:04 KST Thu).
+// #20 (FCC) was ruled Wed evening in the US; first reported 26 Nov 02:22 UTC.
+// No story here first broke on 25 Nov or earlier, under that convention.
 import { mkdirSync, writeFileSync } from "node:fs";
 import { deflateSync } from "node:zlib";
 
@@ -306,8 +314,9 @@ function encodePNG(): Buffer {
 }
 
 // ---------------------------------------------------------------- the 35 stories
-// Every story was first reported on Thursday 26 November 2026 (in some
-// time zone). Sources + times are as reported; times are UTC unless noted.
+// Every story was first reported on Thursday 26 November 2026 (UTC),
+// unless its time is given in another zone (#2: KST). Sources + times are
+// as reported; the DATE CHECK box states this convention in plain words.
 interface Story {
   n: number;
   tag: string;
@@ -317,31 +326,31 @@ interface Story {
   time: string;
 }
 const STORIES: Story[] = [
-  { n: 1, tag: "TRADE", title: "TARIFF FALLOUT: ASIA MEETS IN VIETNAM", sum: "CPTPP, ASEAN and EU trade chiefs gather in Hanoi hours after Trump's new tariff salvo on 14 partners; Seoul vows talks to protect its interests.", src: "Reuters", time: "03:01 UTC" },
-  { n: 2, tag: "WAR", title: "KIM ORDERS WIDER TACTICAL NUCLEAR PUSH", sum: "KCNA reports Kim Jong Un toured nuclear plants and called deploying tactical nuclear weapons across domains an urgent task; output capacity to expand.", src: "Reuters / KCNA", time: "07:04 KST" },
-  { n: 3, tag: "ENERGY", title: "OIL JUMPS AS IRAN CLAIMS MINE HITS IN HORMUZ", sum: "Brent climbs to $94.81 after Iran says mines struck two ships in the Strait of Hormuz, a day after the Houthis claimed a hit on Saudi Arabia's Ras Tanura refinery.", src: "Reuters", time: "01:37 UTC" },
+  { n: 1, tag: "TRADE", title: "TARIFF FALLOUT: ASIA MEETS IN VIETNAM", sum: "CPTPP, ASEAN and EU chiefs meet in Hanoi after Trump's tariff salvo; Seoul vows talks.", src: "Reuters", time: "03:01 UTC" },
+  { n: 2, tag: "WAR", title: "KIM ORDERS WIDER TACTICAL NUCLEAR PUSH", sum: "KCNA: Kim toured nuclear plants and called tactical nuclear deployment an urgent task.", src: "Reuters / KCNA", time: "07:04 KST" },
+  { n: 3, tag: "ENERGY", title: "OIL JUMPS AS IRAN CLAIMS MINE HITS IN HORMUZ", sum: "Brent hits $94.81 after Iran says mines struck two ships in the Strait of Hormuz.", src: "Reuters", time: "01:37 UTC" },
   { n: 4, tag: "TRADE", title: "VIETNAM RACES TO CLOSE US TRADE DEAL", sum: "Hanoi says it is working with Washington to complete a trade deal as soon as possible after the new US tariff proposals.", src: "Reuters", time: "00:30 UTC" },
   { n: 5, tag: "MARKETS", title: "ASIA SHARES BOUNCE AS AI SELL-OFF PAUSES", sum: "Nikkei gains 1.6% and Kospi 1.9% after Wall Street fought back from deep lows; regional shares still off 9% in November.", src: "Reuters", time: "01:30 UTC" },
   { n: 6, tag: "DISASTER", title: "JAVA GOLD MINE: 13 DEAD, 13 STILL TRAPPED", sum: "Rescuers resume the search for 13 workers trapped in an illegal gold mine in West Java after 13 are confirmed dead.", src: "Reuters", time: "03:00 UTC" },
   { n: 7, tag: "MARKETS", title: "BANK OF JAPAN SIGNALS FASTER RATE HIKES", sum: "Board member Naoki Tamura says the BOJ must respond swiftly to signs of an inflation overshoot, including by speeding up rate rises.", src: "Reuters", time: "01:30 UTC" },
   { n: 8, tag: "MARKETS", title: "RUPEE AT 11-MONTH HIGH ON RECORD INFLOWS", sum: "The rupee closes near 92.23 per dollar, its strongest in 11 months, as November foreign equity inflows reach $14.26bn.", src: "Reuters", time: "26 NOV" },
   { n: 9, tag: "TECH", title: "UBER NAMES RAKESH RANJAN INDIA CHIEF", sum: "Uber appoints outsider Rakesh Ranjan as president for India and South Asia, effective 4 January 2027.", src: "Reuters", time: "02:09 UTC" },
-  { n: 10, tag: "COURTS", title: "JUDGES URGE DROPPING GRAVEST NETANYAHU CHARGES", sum: "Israeli judges recommend dropping the most serious bribery charges against Prime Minister Benjamin Netanyahu.", src: "BBC", time: "26 NOV" },
+  { n: 10, tag: "POLITICS", title: "FRANCE MAINSTREAM RISKS PRESIDENTIAL WIPEOUT", sum: "Le Pen and Melenchon top polls for the April-May 2027 vote while the centre has no agreed candidate.", src: "BBC", time: "00:23 UTC" },
   { n: 11, tag: "MARKETS", title: "DOLLAR EASES TO 103.71 AS YIELDS SLIP", sum: "The dollar index eases as Treasury yields fall; the safe-haven Swiss franc gains and the euro inches up to $1.0973.", src: "Reuters", time: "01:30 UTC" },
   { n: 12, tag: "MARKETS", title: "US 10-YEAR YIELD AT 4.848% AFTER 11-WEEK LOW", sum: "Yields on 10-year Treasuries ease to 4.848% after touching an 11-week trough overnight; the yen holds at 159.14.", src: "Reuters", time: "01:30 UTC" },
-  { n: 13, tag: "CRIME", title: "FIVE MEXICANS HELD OVER $227M NIGERIA METH LAB", sum: "Five Mexican nationals are detained in Nigeria over a drug production facility valued at $227m.", src: "BBC", time: "26 NOV" },
-  { n: 14, tag: "CRIME", title: "COLOMBIA FREES 76 HELD HOSTAGE 17 HOURS", sum: "Police storm a supermarket and free 76 people held hostage for 17 hours.", src: "BBC", time: "26 NOV" },
-  { n: 15, tag: "MEDIA", title: "BBC JOURNALISTS VOTE FOR INDUSTRIAL ACTION", sum: "BBC News journalists decide on work stoppages over layoffs and rising workloads.", src: "BBC", time: "01:29 UTC" },
+  { n: 13, tag: "POLITICS", title: "COULD AL-SHABAB TAKE OVER AS TROOPS LEAVE SOMALIA", sum: "Ugandan troops are withdrawing after 20 years as funding strains hit; analysts fear Mogadishu could fall.", src: "BBC", time: "26 NOV" },
+  { n: 14, tag: "POLITICS", title: "SPAIN VOTES SUNDAY: SNAP ELECTION AT A CROSSROADS", sum: "Feijoo's conservatives lead the polls ahead of Sunday's snap vote after eight years of Socialist rule.", src: "BBC", time: "00:40 UTC" },
+  { n: 15, tag: "CULTURE", title: "SOUTH PARK FINALE: GTA 6, DATA CENTRES, ZOMBIE KENNY", sum: "Season 29 ends with outages, AI data centres and a GTA 6 frenzy as the town hunts a Chinese spy.", src: "Variety", time: "04:01 UTC" },
   { n: 16, tag: "POLITICS", title: "UK TO PUBLISH NEW TREATIES AGREED WITH EU", sum: "The UK government is set to publish new treaties agreed with the European Union.", src: "BBC", time: "26 NOV" },
   { n: 17, tag: "DEFENCE", title: "US ARMY HAILS IOWA EXPLOSIVES BLAST A SUCCESS", sum: "The US Army says a controlled lead azide explosives blast in Iowa was a 'huge success'.", src: "BBC", time: "26 NOV" },
   { n: 18, tag: "MEDIA", title: "BBC JOINS MET OFFICE FOR WEATHER COVERAGE", sum: "The BBC launches a partnership with the Met Office for its weather coverage.", src: "BBC", time: "26 NOV" },
   { n: 19, tag: "POLITICS", title: "THE PASTOR WHO WANTS WOMEN'S VOTE REPEALED", sum: "A US pastor's movement to overturn women's right to vote gains traction among very conservative Christians.", src: "BBC", time: "26 NOV" },
-  { n: 20, tag: "COURTS", title: "JUDGE BLOCKS FCC MOVE AGAINST ABC LICENCES", sum: "A US judge blocks the FCC's move against ABC station licences: 'This is not a close case'.", src: "Variety", time: "26 NOV" },
-  { n: 21, tag: "SPACE", title: "FIRST IMAGES OF ASTEROID CRATER AFTER DART HIT", sum: "Four years after NASA crashed a spacecraft into an asteroid, images reveal a stadium-sized crater.", src: "ScienceAlert", time: "26 NOV" },
-  { n: 22, tag: "SPACE", title: "RUSSIAN FREIGHTER DOCKS WITH SPACE STATION", sum: "A Russian Progress cargo capsule docks with the ISS, using the Poisk module port.", src: "Behind The Black", time: "26 NOV" },
-  { n: 23, tag: "TECH", title: "INDIA BACKS CAPITAL EQUIPMENT WITH 8-YEAR PLAN", sum: "India approves an incentive scheme for capital equipment, including tunnel-boring machines and earthmovers.", src: "News", time: "26 NOV" },
+  { n: 20, tag: "COURTS", title: "JUDGE BLOCKS FCC MOVE AGAINST ABC LICENCES", sum: "A US judge blocks the FCC's move against ABC station licences: 'This is not a close case'.", src: "Reuters", time: "02:22 UTC" },
+  { n: 21, tag: "TECH", title: "US SPLIT OVER HUANG SPY CLAIMS AFTER NVIDIA RETURN", sum: "FBI, CIA and White House officials disagree over whether Alice Huang passed secrets to China.", src: "Reuters", time: "26 NOV" },
+  { n: 22, tag: "SPACE", title: "RUSSIAN FREIGHTER DUE TO DOCK 12:11 UTC", sum: "Progress MS-36 is due to dock with the ISS at 12:11 UTC today, using the Poisk module port.", src: "Behind The Black", time: "26 NOV" },
+  { n: 23, tag: "ECONOMY", title: "BANK OF KOREA LIFTS RATE TO 3.25% IN 25 BPS HIKE", sum: "Seoul resumes tightening after an October pause as an AI export boom keeps growth brisk and inflation high.", src: "Reuters", time: "00:00 UTC" },
   { n: 24, tag: "MARKETS", title: "GOLD EASES TO $3,566, DOWN 8% IN NOVEMBER", sum: "Gold slips 0.4% to $3,566 an ounce, having fallen almost 8% so far this month.", src: "Reuters", time: "01:30 UTC" },
-  { n: 25, tag: "SPORT", title: "ENGLAND'S ALL BLACKS TESTS ARE 'WORLD CUP PRACTICE'", sum: "Steve Borthwick says England's Tests against New Zealand in the Nations Championship are World Cup practice.", src: "Sky Sports", time: "26 NOV" },
+  { n: 25, tag: "TRADE", title: "CHINESE FIRMS NOW TOP RIVALS FOR JAPANESE ABROAD", sum: "A JETRO survey of 7,695 firms finds Chinese rivals the biggest threat in Latin America, Africa and Thailand.", src: "Reuters", time: "02:00 UTC" },
   { n: 26, tag: "SPORT", title: "WORLD CHESS: GAME 3 DUE, GUKESH-SINDAROV 1-1", sum: "The World Championship match is tied 1-1 after Game 2 ends in a draw; Game 3 is scheduled for today.", src: "Chess", time: "26 NOV" },
   { n: 27, tag: "SPORT", title: "ASIA CUP RISING STARS: SRI LANKA A v INDIA A", sum: "Sri Lanka A meet India A in Doha in the semi-final of the DP World Men's Asia Cup Rising Stars.", src: "BCCI", time: "26 NOV" },
   { n: 28, tag: "LIFE", title: "THANKSGIVING DAY IN THE US, AMID STORMS", sum: "Americans mark Thanksgiving as storms bring high winds and heavy rain to the East Coast and snow to the Midwest.", src: "AP", time: "26 NOV" },
@@ -385,19 +394,29 @@ function sceneTrade(x: number, y: number, w: number, h: number): void {
   line(x + 240, y + 40, x + 228, y + 54, RED);
   line(x + 240, y + 40, x + 252, y + 54, RED);
   drawText(x + 222, y + 96, "TARIFFS", 1, RED, true);
+  drawText(x + 36, y + 92, "HANOI", 1, NAVY, true);
+  drawText(x + 118, y + 102, "SEOUL - VIETNAM", 1, INKSOFT, true);
 }
 function sceneNuclear(x: number, y: number, w: number, h: number): void {
-  const cx = x + 130;
-  const cy = y + 52;
-  disc(cx, cy, 10, RED);
-  ellipse(cx, cy, 44, 16, NAVY);
-  ellipse(cx, cy, 16, 44, NAVY);
-  ellipse(cx, cy, 34, 34, NAVY);
-  // trefoil marks
-  disc(cx - 52, cy + 34, 5, INK);
-  disc(cx + 52, cy + 34, 5, INK);
-  drawText(x + 18, y + 92, "TACTICAL NUKES", 1, RED, true);
-  drawText(x + 210, y + 92, "KCNA", 1, INKSOFT, true);
+  // radiation trefoil (left): ring + centre + three blades
+  ring(x + 60, y + 48, 34, INK, 2);
+  disc(x + 60, y + 48, 7, RED);
+  disc(x + 60, y + 26, 9, RED);
+  disc(x + 42, y + 62, 9, RED);
+  disc(x + 78, y + 62, 9, RED);
+  drawText(x + 38, y + 88, "KOREA", 1, NAVY, true);
+  // missile on a launcher (right): body, nose, fins, flame, base, wheels
+  line(x + 170, y + 20, x + 177, y + 8, NAVY);
+  line(x + 184, y + 20, x + 177, y + 8, NAVY);
+  fillRect(x + 170, y + 20, 14, 56, NAVY);
+  fillRect(x + 164, y + 66, 26, 8, NAVY);
+  disc(x + 177, y + 84, 6, GOLD);
+  disc(x + 177, y + 86, 4, RED);
+  fillRect(x + 160, y + 76, 34, 6, INK);
+  disc(x + 168, y + 88, 5, INK);
+  disc(x + 186, y + 88, 5, INK);
+  drawText(x + 96, y + 100, "TACTICAL NUKES", 1, RED, true);
+  drawText(x + 252, y + 86, "KCNA", 1, INKSOFT, true);
 }
 function sceneOil(x: number, y: number, w: number, h: number): void {
   // tanker + flame + waves
@@ -443,7 +462,107 @@ function storyRow(x: number, y: number, w: number, s: Story): number {
   // source + time on the title line, right aligned
   const meta = s.src + " \u00b7 " + s.time;
   drawText(x + w - textW(meta, 1), y, meta, 1, RED, true);
-  return y + 26;
+  return y + 25;
+}
+
+// ---------------------------------------------------------------- stats boxes
+const STATS: Array<[string, string]> = [
+  ["$94.81", "BRENT CRUDE"],
+  ["3.25%", "BOK RATE +25 BPS"],
+  ["+1.6%", "NIKKEI \u00b7 KOSPI +1.9%"],
+  ["13 DEAD", "13 TRAPPED \u00b7 JAVA MINE"],
+  ["$3,566", "GOLD, -8% IN NOV"],
+  ["103.71", "DOLLAR INDEX"],
+];
+function statBoxes(y: number): void {
+  const bw = 154;
+  const gap = 8;
+  let sx = MX + 2;
+  for (const [v, l] of STATS) {
+    fillRect(sx, y, bw, 30, PANEL);
+    box(sx, y, bw, 30, INK, 1);
+    drawText(sx + 6, y + 4, v, 2, NAVY, true);
+    drawText(sx + 6, y + 20, l, 1, INKSOFT, true);
+    sx += bw + gap;
+  }
+}
+
+// ---------------------------------------------------------------- world map
+// Simplified continents + numbered pins for lead stories by place.
+// Pin 2 is Korea (story #2, and #23 BOK is also Korea). Pin coords are
+// relative to the map origin.
+const LAND: RGB = [200, 194, 168];
+const PINS: Array<{ n: string; x: number; y: number }> = [
+  { n: "15", x: 122, y: 26 },
+  { n: "10", x: 422, y: 20 },
+  { n: "14", x: 400, y: 30 },
+  { n: "13", x: 442, y: 44 },
+  { n: "3", x: 562, y: 32 },
+  { n: "1", x: 672, y: 30 },
+  { n: "6", x: 692, y: 45 },
+  { n: "2", x: 732, y: 22 },
+];
+function worldMap(x: number, y: number, w: number, h: number): void {
+  fillRect(x, y, w, h, PANEL);
+  box(x, y, w, h, INK, 1);
+  drawText(x + 6, y + 4, "WORLD MAP", 1, NAVY, true);
+  drawText(x + w - textW("PINS MARK LEAD STORIES - 2 IS KOREA, ALSO #23", 1) - 6, y + 4, "PINS MARK LEAD STORIES - 2 IS KOREA, ALSO #23", 1, INKSOFT, true);
+  // continents (very simplified)
+  fillRect(x + 52, y + 16, 120, 16, LAND); // N America
+  fillRect(x + 132, y + 32, 40, 8, LAND); // Central America
+  fillRect(x + 180, y + 14, 16, 8, LAND); // Greenland
+  fillRect(x + 140, y + 42, 34, 10, LAND); // S America
+  fillRect(x + 392, y + 16, 52, 14, LAND); // Europe
+  fillRect(x + 404, y + 30, 40, 16, LAND); // Africa
+  fillRect(x + 452, y + 14, 300, 18, LAND); // Asia
+  fillRect(x + 532, y + 32, 80, 10, LAND); // S Asia
+  fillRect(x + 632, y + 44, 60, 6, LAND); // Indonesia
+  fillRect(x + 712, y + 44, 46, 8, LAND); // Australia
+  for (const p of PINS) {
+    disc(x + p.x, y + p.y, 8, NAVY);
+    drawText(x + p.x - Math.floor(textW(p.n, 1) / 2), y + p.y - 3, p.n, 1, [255, 255, 255], true);
+  }
+}
+
+// ---------------------------------------------------------------- layout check
+// Warns (never throws) when any string would overflow its box, any summary
+// wraps past 2 lines, any map pin touches an edge or another pin, or the
+// story numbering is broken. A clean build prints "VERIFY: 0 warnings".
+function verifyLayout(): void {
+  const warns: string[] = [];
+  const colW = Math.floor((CW - 24) / 2);
+  const tw = colW - 26;
+  for (let i = 3; i < 35; i++) {
+    const s = STORIES[i];
+    const meta = s.src + " \u00b7 " + s.time;
+    if (textW(s.title, 1) + textW(meta, 1) + 4 > tw) warns.push("#" + s.n + " title+meta overflow");
+    const lines = wrap(s.sum, tw, 1);
+    if (lines.length > 2) warns.push("#" + s.n + " summary wraps to " + lines.length + " lines");
+  }
+  const pw = Math.floor((CW - 2 * 12) / 3);
+  for (let i = 0; i < 3; i++) {
+    const s = STORIES[i];
+    if (wrap(s.title, pw - 20, 1).length > 1) warns.push("panel #" + s.n + " title wraps");
+    const sl = wrap(s.sum, pw - 20, 1).length;
+    if (sl > 2) warns.push("panel #" + s.n + " summary wraps to " + sl + " lines");
+  }
+  for (const [v, l] of STATS) {
+    if (textW(v, 2) > 142) warns.push("stat value too wide: " + v);
+    if (textW(l, 1) > 142) warns.push("stat label too wide: " + l);
+  }
+  for (const p of PINS) {
+    if (p.x - 8 < 0 || p.x + 8 > CW || p.y - 8 < 0 || p.y + 8 > 54) warns.push("pin " + p.n + " touches map edge");
+  }
+  for (let a = 0; a < PINS.length; a++)
+    for (let b = a + 1; b < PINS.length; b++) {
+      const dx = PINS[a].x - PINS[b].x;
+      const dy = PINS[a].y - PINS[b].y;
+      if (dx * dx + dy * dy < 17 * 17) warns.push("pins " + PINS[a].n + "/" + PINS[b].n + " too close");
+    }
+  if (STORIES.length !== 35) warns.push("story count is " + STORIES.length);
+  for (let i = 0; i < 35; i++) if (STORIES[i].n !== i + 1) warns.push("story #" + (i + 1) + " out of order");
+  for (const wmsg of warns) console.warn("VERIFY WARNING: " + wmsg);
+  console.log("VERIFY: " + warns.length + " warnings");
 }
 
 function main(): void {
@@ -458,32 +577,35 @@ function main(): void {
   drawTextC(W / 2, 92, "THURSDAY, 26 NOVEMBER 2026", 3, RED, true);
   hline(MX, 122, CW, RULE, 2);
 
-  // ---- headline (story 1)
-  drawTextC(W / 2, 132, "TARIFF FALLOUT: ASIA MEETS AS TRUMP'S NEW LEVIES LAND", 2, INK, true);
-  drawTextC(W / 2, 158, "CPTPP, ASEAN and EU trade chiefs gather in Vietnam \u00b7 Seoul vows talks \u00b7 Hanoi races to close a deal", 1, INKSOFT);
-  drawTextC(W / 2, 172, "35 DATED STORIES \u00b7 8 REGIONS \u00b7 16 FIELDS \u00b7 UTC TIMELINE & DATE-CHECK AUDIT", 1, NAVY, true);
-  hline(MX, 188, CW, RULE, 3);
+  // ---- six big-number stats boxes
+  statBoxes(128);
+
+  // ---- headline (story 1) — no apostrophe in the headline
+  drawTextC(W / 2, 166, "TARIFF FALLOUT: ASIA MEETS AS NEW TRUMP LEVIES LAND", 2, INK, true);
+  drawTextC(W / 2, 190, "CPTPP, ASEAN and EU trade chiefs gather in Vietnam \u00b7 Seoul vows talks \u00b7 Hanoi races to close a deal", 1, INKSOFT);
+  drawTextC(W / 2, 202, "35 DATED STORIES \u00b7 7 REGIONS \u00b7 16 FIELDS \u00b7 UTC TIMELINE & DATE-CHECK AUDIT", 1, NAVY, true);
+  hline(MX, 212, CW, RULE, 3);
 
   // ---- three lead panels
   const pw = Math.floor((CW - 2 * 12) / 3);
-  const py = 198;
-  const ph = 226;
+  const py = 222;
+  const ph = 192;
   leadPanel(MX, py, pw, ph, STORIES[0], sceneTrade);
   leadPanel(MX + pw + 12, py, pw, ph, STORIES[1], sceneNuclear);
   leadPanel(MX + 2 * pw + 24, py, pw, ph, STORIES[2], sceneOil);
 
   // ---- UTC timeline strip
   const ty = py + ph + 10;
-  fillRect(MX, ty, CW, 32, NAVY);
+  fillRect(MX, ty, CW, 28, NAVY);
   drawText(MX + 8, ty + 4, "UTC TIMELINE", 1, [255, 255, 255], true);
-  drawText(MX + 8, ty + 18, "00:30 Vietnam races to close US deal \u00b7 01:29 BBC journalists vote to strike", 1, [255, 255, 255]);
-  drawText(MX + 8 + 470, ty + 4, "01:37 Oil jumps on Hormuz mine claims", 1, [255, 255, 255]);
-  drawText(MX + 8 + 470, ty + 18, "03:01 Seoul vows tariff talks \u00b7 03:00 CPTPP meets in Vietnam", 1, [255, 255, 255]);
+  drawText(MX + 8, ty + 16, "00:23 France at risk \u00b7 00:40 Spain votes Sunday \u00b7 01:37 Oil jumps", 1, [255, 255, 255]);
+  drawText(MX + 8 + 470, ty + 4, "02:00 JETRO survey \u00b7 03:01 Seoul vows tariff talks", 1, [255, 255, 255]);
+  drawText(MX + 8 + 470, ty + 16, "04:01 South Park finale \u00b7 12:11 Progress due to dock", 1, [255, 255, 255]);
 
   // ---- regions bar
-  const ry = ty + 42;
+  const ry = ty + 28 + 10;
   drawText(MX, ry, "REGIONS:", 1, INK, true);
-  const regions = ["N AMERICA 11", "S AMERICA 1", "EUROPE 8", "M EAST 3", "AFRICA 1", "S ASIA 3", "E ASIA 3", "SE ASIA 5"];
+  const regions = ["N AMERICA 12", "EUROPE 7", "M EAST 1", "AFRICA 1", "S ASIA 4", "E ASIA 5", "SE ASIA 5"];
   let rx = MX + 62;
   for (const r of regions) {
     const w = textW(r, 1) + 12;
@@ -492,8 +614,12 @@ function main(): void {
     rx += w + 6;
   }
 
+  // ---- world map with numbered pins
+  const my = ry + 16;
+  worldMap(MX, my, CW, 54);
+
   // ---- numbered list 4..35, two columns
-  const ly = ry + 22;
+  const ly = my + 54 + 8;
   hline(MX, ly - 6, CW, RULE, 2);
   const colW = Math.floor((CW - 24) / 2);
   let y1 = ly;
@@ -510,16 +636,18 @@ function main(): void {
   // ---- footer: DATE CHECK + sources
   const fy = Math.max(y1, y2) + 8;
   hline(MX, fy, CW, RULE, 3);
-  fillRect(MX, fy + 8, 560, 62, [255, 255, 255]);
-  box(MX, fy + 8, 560, 62, RED, 2);
+  fillRect(MX, fy + 8, 560, 56, [255, 255, 255]);
+  box(MX, fy + 8, 560, 56, RED, 2);
   drawText(MX + 10, fy + 14, "DATE CHECK \u2014 JUDGE, PLEASE READ", 1, RED, true);
-  drawText(MX + 10, fy + 28, "Every story above happened or was first reported on", 1, INK);
-  drawText(MX + 10, fy + 40, "THURSDAY 26 NOVEMBER 2026, in some time zone.", 1, INK, true);
-  drawText(MX + 10, fy + 54, "No story is from 25 Nov or earlier. Times are UTC unless noted.", 1, INKSOFT);
+  drawText(MX + 10, fy + 28, "Every story above was first reported on", 1, INK);
+  drawText(MX + 10, fy + 40, "THURSDAY 26 NOVEMBER 2026 - UTC, or local time where noted.", 1, INK, true);
+  drawText(MX + 10, fy + 52, "No story first broke on 25 Nov or earlier. #2 is timed in KST.", 1, INKSOFT);
   const fx = MX + 576;
   drawText(fx, fy + 14, "SOURCES", 1, INK, true);
-  drawPara(fx, fy + 28, "Reuters, BBC, BBC Verify, AP, Al Jazeera / KCNA, Variety, Sky Sports, ScienceAlert, Mongabay, BCCI, Chess, Behind The Black.", 392, 1, INKSOFT, 10);
-  drawTextC(W / 2, fy + 78, "Drawn entirely by code \u00b7 main.ts \u00b7 Node 22 stdlib \u00b7 no network \u00b7 deterministic", 1, INKSOFT);
+  drawPara(fx, fy + 28, "Reuters, BBC, AP, KCNA, Variety, Sky Sports, Mongabay, BCCI, Chess, Behind The Black.", 392, 1, INKSOFT, 10);
+  drawTextC(W / 2, fy + 64, "Drawn entirely by code \u00b7 main.ts \u00b7 Node 22 stdlib \u00b7 no network \u00b7 deterministic", 1, INKSOFT);
+
+  verifyLayout();
 
   const outDir = process.env.MAKEFUN_OUTPUT_DIR ?? "out";
   mkdirSync(outDir, { recursive: true });
